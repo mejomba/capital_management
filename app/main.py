@@ -1,6 +1,6 @@
 from fastapi import FastAPI
 
-from app.api import accounts, assets, auth
+from app.api import accounts, assets, auth, holdings, transactions
 from app.core.config import settings
 from app.core.errors import register_exception_handlers
 
@@ -18,6 +18,8 @@ def create_app() -> FastAPI:
     app.include_router(auth.router, prefix=api_prefix)
     app.include_router(accounts.router, prefix=api_prefix)
     app.include_router(assets.router, prefix=api_prefix)
+    app.include_router(transactions.router, prefix=api_prefix)
+    app.include_router(holdings.router, prefix=api_prefix)
 
     @app.get("/health", tags=["health"])
     def health() -> dict[str, str]:
