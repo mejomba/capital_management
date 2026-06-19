@@ -31,6 +31,9 @@ def _migrate() -> None:
 def _clean_tables() -> None:
     """Reset per-user data between tests; keep seeded system assets."""
     with engine.begin() as conn:
+        conn.execute(text("DELETE FROM audit_log"))
+        conn.execute(text("DELETE FROM transaction_leg"))
+        conn.execute(text("DELETE FROM transaction"))
         conn.execute(text("DELETE FROM account"))
         conn.execute(text("DELETE FROM asset WHERE user_id IS NOT NULL"))
         conn.execute(text('DELETE FROM "user"'))
@@ -58,6 +61,26 @@ def register_user(
 
 def auth_headers(token: str) -> dict[str, str]:
     return {"Authorization": f"Bearer {token}"}
+
+
+def create_account(
+    client: TestClient, token: str, name: str = "Main", type: str = "bank"
+) -> str:
+    resp = client.post(
+        "/api/v1/accounts",
+        json={"name": name, "type": type},
+        headers=auth_headers(token),
+    )
+    assert resp.status_code == 201, resp.text
+    return resp.json()["id"]
+
+
+def asset_id(client: TestClient, token: str, symbol: str) -> str:
+    resp = client.get(
+        f"/api/v1/assets?q={symbol}&page_size=100", headers=auth_headers(token)
+    )
+    assert resp.status_code == 200, resp.text
+    return next(a["id"] for a in resp.json()["items"] if a["symbol"] == symbol)
 
 
 @pytest.fixture()
