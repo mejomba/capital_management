@@ -1,0 +1,30 @@
+[project]
+name = "capital-management"
+version = "0.1.0"
+description = "Wealth Manager backend — source of truth for data model, financial logic and API"
+requires-python = ">=3.11"
+dependencies = [
+    "fastapi>=0.115",
+    "uvicorn[standard]>=0.30",
+    "sqlalchemy>=2.0",
+    "alembic>=1.13",
+    "pydantic>=2.7",
+    "pydantic-settings>=2.3",
+    "psycopg[binary]>=3.1",
+    "argon2-cffi>=23.1",
+    "pyjwt>=2.8",
+    "email-validator>=2.1",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=8.2",
+    "httpx>=0.27",
+]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-q"
+
+[tool.setuptools.packages.find]
+include = ["app*"]
