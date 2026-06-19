@@ -5,6 +5,9 @@ from app.models.asset import Asset, AssetClass
 from app.models.transaction import Transaction, TransactionStatus, TransactionType
 from app.models.transaction_leg import TransactionLeg
 from app.models.audit_log import AuditLog, AuditAction
+from app.models.price import Price
+from app.models.lot import Lot
+from app.models.lot_consumption import LotConsumption
 
 __all__ = [
     "Base",
@@ -19,4 +22,7 @@ __all__ = [
     "TransactionLeg",
     "AuditLog",
     "AuditAction",
+    "Price",
+    "Lot",
+    "LotConsumption",
 ]

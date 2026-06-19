@@ -9,6 +9,10 @@ class HoldingOut(ORMModel):
     asset_id: uuid.UUID
     symbol: str
     quantity: MoneyStr
+    value_irr: MoneyStr | None = None
+    value_usd: MoneyStr | None = None
+    unrealized_pnl_irr: MoneyStr | None = None
+    unrealized_pnl_usd: MoneyStr | None = None
 
 
 class HoldingByAssetOut(ORMModel):
@@ -16,16 +20,22 @@ class HoldingByAssetOut(ORMModel):
     symbol: str
     asset_class: AssetClass
     quantity: MoneyStr
+    value_irr: MoneyStr | None = None
+    value_usd: MoneyStr | None = None
+    unrealized_pnl_irr: MoneyStr | None = None
+    unrealized_pnl_usd: MoneyStr | None = None
 
 
 class AssetQuantity(ORMModel):
     asset_id: uuid.UUID
     symbol: str
     quantity: MoneyStr
+    value_irr: MoneyStr | None = None
+    value_usd: MoneyStr | None = None
+    unrealized_pnl_irr: MoneyStr | None = None
+    unrealized_pnl_usd: MoneyStr | None = None
 
 
 class HoldingByClassOut(ORMModel):
-    # Quantities of different assets cannot be summed into one number without
-    # valuation (M3), so a class groups its per-asset holdings.
     asset_class: AssetClass
     items: list[AssetQuantity]
