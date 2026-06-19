@@ -15,7 +15,7 @@ def list_holdings(
     db: DbSession,
     as_of: datetime | None = None,
 ) -> list[HoldingOut]:
-    rows = holdings_service.holdings(db, current_user.id, as_of)
+    rows = holdings_service.valued_holdings(db, current_user.id, as_of)
     return [HoldingOut.model_validate(r) for r in rows]
 
 
@@ -25,7 +25,7 @@ def holdings_by_asset(
     db: DbSession,
     as_of: datetime | None = None,
 ) -> list[HoldingByAssetOut]:
-    rows = holdings_service.holdings_by_asset(db, current_user.id, as_of)
+    rows = holdings_service.valued_by_asset(db, current_user.id, as_of)
     return [HoldingByAssetOut.model_validate(r) for r in rows]
 
 
@@ -35,5 +35,5 @@ def holdings_by_class(
     db: DbSession,
     as_of: datetime | None = None,
 ) -> list[HoldingByClassOut]:
-    rows = holdings_service.holdings_by_class(db, current_user.id, as_of)
+    rows = holdings_service.valued_by_class(db, current_user.id, as_of)
     return [HoldingByClassOut.model_validate(r) for r in rows]

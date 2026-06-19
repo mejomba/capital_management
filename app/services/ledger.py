@@ -17,6 +17,7 @@ from app.models.audit_log import AuditAction
 from app.models.transaction import Transaction, TransactionStatus, TransactionType
 from app.models.transaction_leg import TransactionLeg
 from app.services import holdings as holdings_service
+from app.services import lots as lots_service
 from app.services.audit import record_audit
 
 SINGLE_LEG_TYPES = {
@@ -219,6 +220,8 @@ def create_transaction(db: Session, user_id: uuid.UUID, data) -> Transaction:
 
     _assert_non_negative(db, user_id, {(s.account_id, s.asset_id) for s in specs})
 
+    lots_service.rebuild_for_assets(db, user_id, {s.asset_id for s in specs})
+
     record_audit(
         db,
         user_id=user_id,
@@ -327,9 +330,12 @@ def reverse_transaction(
     db.flush()
 
     # Removing the original from active holdings must not leave anything negative.
+    affected_assets = {leg.asset_id for leg in original.legs}
     _assert_non_negative(
         db, user_id, {(leg.account_id, leg.asset_id) for leg in original.legs}
     )
+
+    lots_service.rebuild_for_assets(db, user_id, affected_assets)
 
     record_audit(
         db,
@@ -346,7 +352,17 @@ def reverse_transaction(
 
 def delete_transaction(db: Session, user_id: uuid.UUID, txn_id: uuid.UUID) -> None:
     txn = get_transaction(db, user_id, txn_id)
+    affected_assets = {leg.asset_id for leg in txn.legs}
+    pairs = {(leg.account_id, leg.asset_id) for leg in txn.legs}
+
     txn.deleted_at = datetime.now(timezone.utc)
+    db.flush()
+
+    # Soft-deleting an active transaction must not drive any holding negative
+    # (mirrors reverse, and keeps lot reconstruction consistent).
+    _assert_non_negative(db, user_id, pairs)
+    lots_service.rebuild_for_assets(db, user_id, affected_assets)
+
     record_audit(
         db,
         user_id=user_id,

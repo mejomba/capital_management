@@ -31,6 +31,9 @@ def _migrate() -> None:
 def _clean_tables() -> None:
     """Reset per-user data between tests; keep seeded system assets."""
     with engine.begin() as conn:
+        conn.execute(text("DELETE FROM lot_consumption"))
+        conn.execute(text("DELETE FROM lot"))
+        conn.execute(text("DELETE FROM price"))
         conn.execute(text("DELETE FROM audit_log"))
         conn.execute(text("DELETE FROM transaction_leg"))
         conn.execute(text("DELETE FROM transaction"))
@@ -81,6 +84,33 @@ def asset_id(client: TestClient, token: str, symbol: str) -> str:
     )
     assert resp.status_code == 200, resp.text
     return next(a["id"] for a in resp.json()["items"] if a["symbol"] == symbol)
+
+
+def add_price(
+    client: TestClient,
+    token: str,
+    asset: str,
+    quote_currency: str,
+    price: str,
+    as_of: str,
+) -> dict:
+    aid = asset_id(client, token, asset)
+    resp = client.post(
+        "/api/v1/prices",
+        json={
+            "asset_id": aid,
+            "quote_currency": quote_currency,
+            "price": price,
+            "as_of": as_of,
+        },
+        headers=auth_headers(token),
+    )
+    assert resp.status_code == 201, resp.text
+    return resp.json()
+
+
+def post_txn(client: TestClient, token: str, body: dict):
+    return client.post("/api/v1/transactions", json=body, headers=auth_headers(token))
 
 
 @pytest.fixture()
