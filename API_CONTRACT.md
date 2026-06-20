@@ -74,6 +74,10 @@
 - `GET    /goals/{id}` (شامل progress مشتق‌شده)
 - `PATCH  /goals/{id}`
 
+## Snapshots (پرتفو، مشتق‌شده)
+- `GET  /snapshots?from=&to=` → اسنپ‌شات‌های روزانه‌ی کاربر (ارزش خالص دوارزی + breakdown).
+- `POST /snapshots/rebuild` → `{from, to}` → بازسازی/backfill اسنپ‌شات‌ها در بازه (idempotent، upsert روی (user, as_of)). خروجی `{created, from, to}`. برای ورود داده‌ی تاریخی استفاده می‌شود. اسنپ‌شات روزانه به‌صورت job هم ساخته می‌شود.
+
 ## Reports
 - `GET /reports/net-worth?from=&to=&currency=both` → سری زمانی از snapshotها
 - `GET /reports/allocation?as_of=&currency=` → فعلی + هدف + drift + پیشنهاد بازتعادل

@@ -8,6 +8,10 @@ from app.models.audit_log import AuditLog, AuditAction
 from app.models.price import Price
 from app.models.lot import Lot
 from app.models.lot_consumption import LotConsumption
+from app.models.liability import Liability, LiabilityType
+from app.models.liability_event import LiabilityEvent, LiabilityEventType
+from app.models.portfolio_snapshot import PortfolioSnapshot
+from app.models.goal import Goal, GoalStatus, GoalType
 
 __all__ = [
     "Base",
@@ -25,4 +29,12 @@ __all__ = [
     "Price",
     "Lot",
     "LotConsumption",
+    "Liability",
+    "LiabilityType",
+    "LiabilityEvent",
+    "LiabilityEventType",
+    "PortfolioSnapshot",
+    "Goal",
+    "GoalStatus",
+    "GoalType",
 ]

@@ -31,6 +31,10 @@ def _migrate() -> None:
 def _clean_tables() -> None:
     """Reset per-user data between tests; keep seeded system assets."""
     with engine.begin() as conn:
+        conn.execute(text("DELETE FROM portfolio_snapshot"))
+        conn.execute(text("DELETE FROM liability_event"))
+        conn.execute(text("DELETE FROM liability"))
+        conn.execute(text("DELETE FROM goal"))
         conn.execute(text("DELETE FROM lot_consumption"))
         conn.execute(text("DELETE FROM lot"))
         conn.execute(text("DELETE FROM price"))
@@ -111,6 +115,30 @@ def add_price(
 
 def post_txn(client: TestClient, token: str, body: dict):
     return client.post("/api/v1/transactions", json=body, headers=auth_headers(token))
+
+
+def create_liability(client: TestClient, token: str, **overrides) -> dict:
+    body = {
+        "name": "Car loan",
+        "type": "loan",
+        "principal": "1000",
+        "currency": "IRR",
+        "interest_rate": "0.18",
+        "start_date": "2026-01-01",
+        "term_months": 12,
+    }
+    body.update(overrides)
+    resp = client.post("/api/v1/liabilities", json=body, headers=auth_headers(token))
+    assert resp.status_code == 201, resp.text
+    return resp.json()
+
+
+def add_liability_event(client: TestClient, token: str, liability_id: str, **body):
+    return client.post(
+        f"/api/v1/liabilities/{liability_id}/events",
+        json=body,
+        headers=auth_headers(token),
+    )
 
 
 @pytest.fixture()
