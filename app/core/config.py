@@ -19,6 +19,12 @@ class Settings(BaseSettings):
     JWT_ALGORITHM: str = "HS256"
     ACCESS_TOKEN_EXPIRE_MINUTES: int = 60
 
+    # Daily portfolio-snapshot scheduler. Disabled by default (and in tests);
+    # snapshot logic is exercised directly and via /snapshots/rebuild.
+    ENABLE_SCHEDULER: bool = False
+    SNAPSHOT_HOUR_UTC: int = 0
+    SNAPSHOT_MINUTE_UTC: int = 30
+
 
 @lru_cache
 def get_settings() -> Settings:
