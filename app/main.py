@@ -11,6 +11,7 @@ from app.api import (
     liabilities,
     prices,
     reports,
+    settings as settings_api,
     snapshots,
     transactions,
 )
@@ -52,6 +53,7 @@ def create_app() -> FastAPI:
     app.include_router(liabilities.router, prefix=api_prefix)
     app.include_router(goals.router, prefix=api_prefix)
     app.include_router(snapshots.router, prefix=api_prefix)
+    app.include_router(settings_api.router, prefix=api_prefix)
     app.include_router(reports.router, prefix=api_prefix)
 
     @app.get("/health", tags=["health"])

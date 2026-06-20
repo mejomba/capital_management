@@ -1970,6 +1970,150 @@
         ]
       }
     },
+    "/api/v1/assumptions": {
+      "get": {
+        "tags": [
+          "settings"
+        ],
+        "summary": "Get Assumptions",
+        "operationId": "get_assumptions_api_v1_assumptions_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AssumptionsOut"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ]
+      },
+      "put": {
+        "tags": [
+          "settings"
+        ],
+        "summary": "Put Assumptions",
+        "operationId": "put_assumptions_api_v1_assumptions_put",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AssumptionsUpdate"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AssumptionsOut"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ]
+      }
+    },
+    "/api/v1/inflation": {
+      "get": {
+        "tags": [
+          "settings"
+        ],
+        "summary": "List Inflation",
+        "operationId": "list_inflation_api_v1_inflation_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/InflationRateOut"
+                  },
+                  "type": "array",
+                  "title": "Response List Inflation Api V1 Inflation Get"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ]
+      },
+      "post": {
+        "tags": [
+          "settings"
+        ],
+        "summary": "Create Inflation",
+        "operationId": "create_inflation_api_v1_inflation_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/InflationRateCreate"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InflationRateOut"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ]
+      }
+    },
     "/api/v1/reports/pnl": {
       "get": {
         "tags": [
@@ -2128,6 +2272,291 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/NetWorthSeriesOut"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/reports/performance": {
+      "get": {
+        "tags": [
+          "reports"
+        ],
+        "summary": "Performance Report",
+        "operationId": "performance_report_api_v1_reports_performance_get",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "from",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "date-time",
+              "title": "From"
+            }
+          },
+          {
+            "name": "to",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "date-time",
+              "title": "To"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PerformanceOut"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/reports/allocation": {
+      "get": {
+        "tags": [
+          "reports"
+        ],
+        "summary": "Allocation Report",
+        "operationId": "allocation_report_api_v1_reports_allocation_get",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "as_of",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "format": "date-time"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "As Of"
+            }
+          },
+          {
+            "name": "currency",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "default": "IRR",
+              "title": "Currency"
+            }
+          },
+          {
+            "name": "goal_id",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "format": "uuid"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Goal Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AllocationOut"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/reports/inflation-comparison": {
+      "get": {
+        "tags": [
+          "reports"
+        ],
+        "summary": "Inflation Comparison",
+        "operationId": "inflation_comparison_api_v1_reports_inflation_comparison_get",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "from",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "date-time",
+              "title": "From"
+            }
+          },
+          {
+            "name": "to",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "date-time",
+              "title": "To"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InflationComparisonOut"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/reports/projection": {
+      "get": {
+        "tags": [
+          "reports"
+        ],
+        "summary": "Projection Report",
+        "operationId": "projection_report_api_v1_reports_projection_get",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "horizon_months",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "default": 12,
+              "title": "Horizon Months"
+            }
+          },
+          {
+            "name": "monthly_contribution",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "number"
+                },
+                {
+                  "type": "string",
+                  "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$"
+                }
+              ],
+              "default": "0",
+              "title": "Monthly Contribution"
+            }
+          },
+          {
+            "name": "scenario",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "enum": [
+                    "pessimistic",
+                    "realistic",
+                    "optimistic"
+                  ],
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Scenario"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProjectionOut"
                 }
               }
             }
@@ -2338,6 +2767,62 @@
         },
         "type": "object",
         "title": "AccountUpdate"
+      },
+      "AllocationOut": {
+        "properties": {
+          "as_of": {
+            "type": "string",
+            "format": "date-time",
+            "title": "As Of"
+          },
+          "currency": {
+            "type": "string",
+            "title": "Currency"
+          },
+          "total_value": {
+            "type": "string",
+            "title": "Total Value"
+          },
+          "current": {
+            "additionalProperties": {
+              "type": "string"
+            },
+            "type": "object",
+            "title": "Current"
+          },
+          "target": {
+            "additionalProperties": {
+              "type": "string"
+            },
+            "type": "object",
+            "title": "Target"
+          },
+          "drift": {
+            "additionalProperties": {
+              "type": "string"
+            },
+            "type": "object",
+            "title": "Drift"
+          },
+          "rebalance": {
+            "items": {
+              "$ref": "#/components/schemas/RebalanceItem"
+            },
+            "type": "array",
+            "title": "Rebalance"
+          }
+        },
+        "type": "object",
+        "required": [
+          "as_of",
+          "currency",
+          "total_value",
+          "current",
+          "target",
+          "drift",
+          "rebalance"
+        ],
+        "title": "AllocationOut"
       },
       "AssetClass": {
         "type": "string",
@@ -2601,6 +3086,103 @@
         "type": "object",
         "title": "AssetUpdate"
       },
+      "AssumptionsOut": {
+        "properties": {
+          "id": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "uuid"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Id"
+          },
+          "display_currency": {
+            "$ref": "#/components/schemas/DisplayCurrency"
+          },
+          "hurdle_mode": {
+            "$ref": "#/components/schemas/HurdleMode"
+          },
+          "hurdle_fixed_rate": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Hurdle Fixed Rate"
+          },
+          "growth_assumptions": {
+            "additionalProperties": true,
+            "type": "object",
+            "title": "Growth Assumptions"
+          },
+          "updated_at": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Updated At"
+          }
+        },
+        "type": "object",
+        "required": [
+          "display_currency",
+          "hurdle_mode"
+        ],
+        "title": "AssumptionsOut"
+      },
+      "AssumptionsUpdate": {
+        "properties": {
+          "display_currency": {
+            "$ref": "#/components/schemas/DisplayCurrency",
+            "default": "both"
+          },
+          "hurdle_mode": {
+            "$ref": "#/components/schemas/HurdleMode",
+            "default": "inflation"
+          },
+          "hurdle_fixed_rate": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "string",
+                "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Hurdle Fixed Rate"
+          },
+          "growth_assumptions": {
+            "anyOf": [
+              {
+                "additionalProperties": true,
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Growth Assumptions"
+          }
+        },
+        "type": "object",
+        "title": "AssumptionsUpdate"
+      },
       "DepositCreate": {
         "properties": {
           "occurred_at": {
@@ -2714,6 +3296,15 @@
           "quantity"
         ],
         "title": "DepositCreate"
+      },
+      "DisplayCurrency": {
+        "type": "string",
+        "enum": [
+          "irr",
+          "usd",
+          "both"
+        ],
+        "title": "DisplayCurrency"
       },
       "ExpenseCreate": {
         "properties": {
@@ -3500,6 +4091,15 @@
         ],
         "title": "HoldingOut"
       },
+      "HurdleMode": {
+        "type": "string",
+        "enum": [
+          "fixed",
+          "inflation",
+          "usd_growth"
+        ],
+        "title": "HurdleMode"
+      },
       "IncomeCreate": {
         "properties": {
           "occurred_at": {
@@ -3613,6 +4213,173 @@
           "quantity"
         ],
         "title": "IncomeCreate"
+      },
+      "InflationComparisonOut": {
+        "properties": {
+          "from": {
+            "type": "string",
+            "format": "date-time",
+            "title": "From"
+          },
+          "to": {
+            "type": "string",
+            "format": "date-time",
+            "title": "To"
+          },
+          "nominal_irr": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Nominal Irr"
+          },
+          "real_irr": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Real Irr"
+          },
+          "usd_based": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Usd Based"
+          },
+          "inflation": {
+            "type": "string",
+            "title": "Inflation"
+          },
+          "hurdle": {
+            "additionalProperties": true,
+            "type": "object",
+            "title": "Hurdle"
+          },
+          "beats_inflation": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Beats Inflation"
+          },
+          "beats_hurdle": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Beats Hurdle"
+          }
+        },
+        "type": "object",
+        "required": [
+          "from",
+          "to",
+          "inflation",
+          "hurdle"
+        ],
+        "title": "InflationComparisonOut"
+      },
+      "InflationRateCreate": {
+        "properties": {
+          "period_year": {
+            "type": "integer",
+            "maximum": 3000.0,
+            "minimum": 1900.0,
+            "title": "Period Year"
+          },
+          "period_month": {
+            "type": "integer",
+            "maximum": 12.0,
+            "minimum": 1.0,
+            "title": "Period Month"
+          },
+          "rate": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "string",
+                "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$"
+              }
+            ],
+            "title": "Rate"
+          },
+          "source": {
+            "type": "string",
+            "maxLength": 64,
+            "title": "Source",
+            "default": "manual"
+          }
+        },
+        "type": "object",
+        "required": [
+          "period_year",
+          "period_month",
+          "rate"
+        ],
+        "title": "InflationRateCreate"
+      },
+      "InflationRateOut": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Id"
+          },
+          "period_year": {
+            "type": "integer",
+            "title": "Period Year"
+          },
+          "period_month": {
+            "type": "integer",
+            "title": "Period Month"
+          },
+          "rate": {
+            "type": "string",
+            "title": "Rate"
+          },
+          "source": {
+            "type": "string",
+            "title": "Source"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Created At"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "period_year",
+          "period_month",
+          "rate",
+          "source",
+          "created_at"
+        ],
+        "title": "InflationRateOut"
       },
       "LegIn": {
         "properties": {
@@ -4504,6 +5271,100 @@
         ],
         "title": "Page[TransactionOut]"
       },
+      "PerfMetrics": {
+        "properties": {
+          "xirr": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Xirr"
+          },
+          "twr": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Twr"
+          },
+          "nominal": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Nominal"
+          },
+          "real": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Real"
+          }
+        },
+        "type": "object",
+        "title": "PerfMetrics"
+      },
+      "PerformanceOut": {
+        "properties": {
+          "from": {
+            "type": "string",
+            "format": "date-time",
+            "title": "From"
+          },
+          "to": {
+            "type": "string",
+            "format": "date-time",
+            "title": "To"
+          },
+          "irr": {
+            "$ref": "#/components/schemas/PerfMetrics"
+          },
+          "usd": {
+            "$ref": "#/components/schemas/PerfMetrics"
+          },
+          "inflation_cumulative": {
+            "type": "string",
+            "title": "Inflation Cumulative"
+          },
+          "usd_based": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Usd Based"
+          }
+        },
+        "type": "object",
+        "required": [
+          "from",
+          "to",
+          "irr",
+          "usd",
+          "inflation_cumulative"
+        ],
+        "title": "PerformanceOut"
+      },
       "PnlAmount": {
         "properties": {
           "irr": {
@@ -4717,6 +5578,102 @@
           "created_at"
         ],
         "title": "PriceOut"
+      },
+      "ProjectionOut": {
+        "properties": {
+          "horizon_months": {
+            "type": "integer",
+            "title": "Horizon Months"
+          },
+          "monthly_contribution": {
+            "type": "string",
+            "title": "Monthly Contribution"
+          },
+          "scenarios": {
+            "additionalProperties": {
+              "items": {
+                "$ref": "#/components/schemas/ProjectionPoint"
+              },
+              "type": "array"
+            },
+            "type": "object",
+            "title": "Scenarios"
+          }
+        },
+        "type": "object",
+        "required": [
+          "horizon_months",
+          "monthly_contribution",
+          "scenarios"
+        ],
+        "title": "ProjectionOut"
+      },
+      "ProjectionPoint": {
+        "properties": {
+          "month": {
+            "type": "integer",
+            "title": "Month"
+          },
+          "net_worth_irr": {
+            "type": "string",
+            "title": "Net Worth Irr"
+          },
+          "net_worth_usd": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Net Worth Usd"
+          }
+        },
+        "type": "object",
+        "required": [
+          "month",
+          "net_worth_irr"
+        ],
+        "title": "ProjectionPoint"
+      },
+      "RebalanceItem": {
+        "properties": {
+          "asset_class": {
+            "type": "string",
+            "title": "Asset Class"
+          },
+          "current_value": {
+            "type": "string",
+            "title": "Current Value"
+          },
+          "target_value": {
+            "type": "string",
+            "title": "Target Value"
+          },
+          "action": {
+            "type": "string",
+            "title": "Action"
+          },
+          "amount": {
+            "type": "string",
+            "title": "Amount"
+          },
+          "delta": {
+            "type": "string",
+            "title": "Delta"
+          }
+        },
+        "type": "object",
+        "required": [
+          "asset_class",
+          "current_value",
+          "target_value",
+          "action",
+          "amount",
+          "delta"
+        ],
+        "title": "RebalanceItem"
       },
       "RebuildRequest": {
         "properties": {
