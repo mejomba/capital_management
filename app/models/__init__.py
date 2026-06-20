@@ -12,6 +12,8 @@ from app.models.liability import Liability, LiabilityType
 from app.models.liability_event import LiabilityEvent, LiabilityEventType
 from app.models.portfolio_snapshot import PortfolioSnapshot
 from app.models.goal import Goal, GoalStatus, GoalType
+from app.models.assumptions import Assumptions, DisplayCurrency, HurdleMode
+from app.models.inflation_rate import InflationRate
 
 __all__ = [
     "Base",
@@ -37,4 +39,8 @@ __all__ = [
     "Goal",
     "GoalStatus",
     "GoalType",
+    "Assumptions",
+    "DisplayCurrency",
+    "HurdleMode",
+    "InflationRate",
 ]

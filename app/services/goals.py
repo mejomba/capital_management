@@ -11,9 +11,11 @@ from app.core.errors import not_found
 from app.core.pagination import PageParams
 from app.models.audit_log import AuditAction
 from app.models.goal import Goal, GoalStatus, GoalType
+from app.models.transaction import Transaction, TransactionStatus
 from app.schemas.goal import GoalCreate, GoalUpdate
 from app.services import holdings as holdings_service
 from app.services import net_worth
+from app.services import performance as performance_service
 from app.services import valuation
 from app.services.audit import record_audit
 
@@ -106,12 +108,7 @@ def compute_progress(db: Session, user_id: uuid.UUID, goal: Goal) -> dict:
     if goal.type is GoalType.target_allocation:
         return _progress_allocation(db, user_id, goal)
     if goal.type is GoalType.target_return:
-        return {
-            "type": goal.type.value,
-            "pending": True,
-            "percent": None,
-            "reason": "Requires return metrics (XIRR/TWR), available in M5",
-        }
+        return _progress_return(db, user_id, goal)
     # custom: simple manual completion based on status
     return {
         "type": goal.type.value,
@@ -121,6 +118,36 @@ def compute_progress(db: Session, user_id: uuid.UUID, goal: Goal) -> dict:
 
 def _s(value: Decimal | None) -> str | None:
     return str(value) if value is not None else None
+
+
+def _progress_return(db: Session, user_id: uuid.UUID, goal: Goal) -> dict:
+    """Annualised money-weighted return since inception vs the target return."""
+    currency = (goal.currency or _DEFAULT_CURRENCY).upper()
+    now = datetime.now(timezone.utc)
+    inception = db.scalar(
+        select(func.min(Transaction.occurred_at)).where(
+            Transaction.user_id == user_id,
+            Transaction.status == TransactionStatus.active,
+            Transaction.deleted_at.is_(None),
+        )
+    )
+    if inception is None:
+        return {"type": goal.type.value, "percent": None, "current_return": None}
+
+    flows = performance_service._build_flows(db, user_id, inception, now, currency)
+    current = performance_service.xirr(flows)
+
+    percent = None
+    if current is not None and goal.target_value not in (None, 0):
+        percent = current / goal.target_value * Decimal(100)
+    return {
+        "type": goal.type.value,
+        "currency": currency,
+        "current_return": _s(current),
+        "target_return": _s(goal.target_value),
+        "percent": _s(percent),
+        "achieved": percent is not None and percent >= Decimal(100),
+    }
 
 
 def _progress_net_worth(db: Session, user_id: uuid.UUID, goal: Goal) -> dict:

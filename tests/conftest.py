@@ -31,6 +31,8 @@ def _migrate() -> None:
 def _clean_tables() -> None:
     """Reset per-user data between tests; keep seeded system assets."""
     with engine.begin() as conn:
+        conn.execute(text("DELETE FROM inflation_rate"))
+        conn.execute(text("DELETE FROM assumptions"))
         conn.execute(text("DELETE FROM portfolio_snapshot"))
         conn.execute(text("DELETE FROM liability_event"))
         conn.execute(text("DELETE FROM liability"))
@@ -137,6 +139,25 @@ def add_liability_event(client: TestClient, token: str, liability_id: str, **bod
     return client.post(
         f"/api/v1/liabilities/{liability_id}/events",
         json=body,
+        headers=auth_headers(token),
+    )
+
+
+def deposit(client: TestClient, token: str, account_id: str, symbol: str,
+            quantity: str, occurred_at: str, **extra):
+    body = {
+        "type": "deposit", "occurred_at": occurred_at,
+        "account_id": account_id, "asset_id": asset_id(client, token, symbol),
+        "quantity": quantity,
+    }
+    body.update(extra)
+    return post_txn(client, token, body)
+
+
+def add_inflation(client: TestClient, token: str, year: int, month: int, rate: str):
+    return client.post(
+        "/api/v1/inflation",
+        json={"period_year": year, "period_month": month, "rate": rate},
         headers=auth_headers(token),
     )
 

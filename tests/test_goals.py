@@ -66,13 +66,23 @@ def test_target_allocation_progress(client: TestClient, alice: dict) -> None:
     assert Decimal(prog["percent"]) == Decimal("90")
 
 
-def test_target_return_progress_pending(client: TestClient, alice: dict) -> None:
+def test_target_return_progress_computed(client: TestClient, alice: dict) -> None:
     token = alice["token"]
+    acc = create_account(client, token, type="exchange")
+    add_price(client, token, "USD", "IRR", "50", "2026-01-01")
+    add_price(client, token, "BTC", "IRR", "1000", "2026-01-01")
+    add_price(client, token, "BTC", "IRR", "1100", "2026-06-20")  # today
+    post_txn(client, token, {
+        "type": "deposit", "occurred_at": "2026-01-01T00:00:00Z",
+        "account_id": acc, "asset_id": asset_id(client, token, "BTC"), "quantity": "1",
+    })
     goal = _create_goal(client, token, type="target_return", title="20% return",
-                        target_value="0.20").json()
+                        currency="IRR", target_value="0.20").json()
     prog = _progress(client, token, goal["id"])
-    assert prog["pending"] is True
-    assert prog["percent"] is None
+    # money-weighted return since inception is now computed (no longer pending)
+    assert prog["current_return"] is not None
+    assert Decimal(prog["current_return"]) > 0
+    assert prog["percent"] is not None
 
 
 def test_custom_progress_null_until_achieved(client: TestClient, alice: dict) -> None:
