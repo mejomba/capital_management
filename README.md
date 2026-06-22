@@ -57,7 +57,7 @@ uvicorn app.main:app --reload
 
 | متغیر | پیش‌فرض | توضیح |
 |---|---|---|
-| `DATABASE_URL` | `postgresql+psycopg://cm@127.0.0.1:5432/cm` | آدرس SQLAlchemy (درایور psycopg v3) |
+| `DATABASE_URL` | `postgresql+psycopg://cm:cm@127.0.0.1:5432/cm` | آدرس SQLAlchemy (درایور psycopg v3)؛ شامل پسورد `user:password@` |
 | `SECRET_KEY` | placeholder توسعه | کلید امضای JWT (در production حداقل ۳۲ بایت) |
 | `ACCESS_TOKEN_EXPIRE_MINUTES` | `60` | طول عمر access token |
 | `JWT_ALGORITHM` | `HS256` | الگوریتم JWT |
@@ -82,7 +82,7 @@ migrationها در `migrations/versions/` با نام‌گذاری `000N_*` هس
 
 ```bash
 createdb -h 127.0.0.1 -U cm cm_test          # یک‌بار
-DATABASE_URL=postgresql+psycopg://cm@127.0.0.1:5432/cm_test python -m pytest
+DATABASE_URL=postgresql+psycopg://cm:cm@127.0.0.1:5432/cm_test python -m pytest
 ```
 
 پوشش تست شامل: reconciliation موجودی، FIFO چندلاتی و سود/زیان دوارزی، carry-over انتقال،

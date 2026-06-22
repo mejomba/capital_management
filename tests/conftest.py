@@ -3,7 +3,7 @@ import os
 # Point the whole app at the test database BEFORE importing any app module
 # (settings are cached on first import and env vars win over .env).
 os.environ.setdefault(
-    "DATABASE_URL", "postgresql+psycopg://cm@127.0.0.1:5432/cm_test"
+    "DATABASE_URL", "postgresql+psycopg://cm:cm@127.0.0.1:5432/cm_test"
 )
 os.environ.setdefault(
     "SECRET_KEY", "test-secret-key-at-least-32-bytes-long-000"
