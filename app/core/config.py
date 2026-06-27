@@ -13,7 +13,7 @@ class Settings(BaseSettings):
     PROJECT_NAME: str = "Wealth Manager"
     API_V1_PREFIX: str = "/api/v1"
 
-    DATABASE_URL: str = "postgresql+psycopg://cm@127.0.0.1:5432/cm"
+    DATABASE_URL: str = "postgresql+psycopg://cm@127.0.0.1:5433/cm"
 
     SECRET_KEY: str = "change-me-in-production-please"
     JWT_ALGORITHM: str = "HS256"
